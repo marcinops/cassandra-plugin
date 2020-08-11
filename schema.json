@@ -1,0 +1,205 @@
+{
+    "repositoryDefinition": {
+        "type": "object",
+        "properties": {
+            "cassandra_home": { "type": "string" },
+            "pretty_name": { "type": "string" }
+        },
+        "nameField": "cassandra_home",
+        "identityFields": ["cassandra_home"]
+    },
+    "sourceConfigDefinition": {
+        "type": "object",
+        "required": ["name"],
+        "ordering": ["name"],
+        "additionalProperties": false,
+        "properties": {
+            "name": { "type": "string" },
+            "cluster_size": { "type": "integer"}
+        },
+        "nameField": "name",
+        "identityFields": ["name"]
+    },
+    "virtualSourceDefinition": {
+        "type": "object",
+        "additionalProperties" : false,
+        "ordering": [
+            "cluster_name",
+            "mountLocation",
+            "nodeName",
+            "port",
+            "node_list"
+        ],
+        "required": [
+            "cluster_name",
+            "mountLocation",
+            "nodeName",
+            "port"    
+        ],
+        "properties" : {
+            "cluster_name": { 
+                "type": "string",
+                "prettyName": "Name of the cluster",
+                "description": "Name of the new cluster created by Delphix"
+            },
+            "mountLocation": {
+                "type": "string",
+                "format": "unixpath",
+                "prettyName": "Mount Location on Target Host",
+                "description": "Where to mount VDB onto the target hosts"
+            },
+            "nodeName" : {
+                "type" : "string",
+                "prettyName": "Cassandra Node Name",
+                "default": "",
+                "maxLength": 50
+             },
+             "port": {
+                "type": "integer",
+                "prettyName": "Cassandra Port"
+            },
+            "node_list": {
+                "type": "array",
+                "prettyName": "Additional Nodes",
+                "items": {
+                    "type": "object",
+                    "required": ["nodeName","port","environment", "environmentUser"],
+                    "ordering": ["nodeName","port","environment", "environmentUser"],
+                    "properties": {
+                        "environment": {
+                            "type": "string",
+                            "format": "reference",
+                            "referenceType": "UnixHostEnvironment",
+                            "prettyName": "Delphix Environment name",
+                            "description": ""
+                        },
+                        "environmentUser": {
+                            "type": "string",
+                            "format": "reference",
+                            "referenceType": "EnvironmentUser",
+                            "prettyName": "Delphix Environment User",
+                            "description": "",
+                            "matches": "environment"
+                        },
+                        "nodeName" : {
+                            "type" : "string",
+                            "prettyName": "Cassandra Node Name",
+                            "default": "",
+                            "maxLength": 40
+                         },
+                         "port": {
+                            "type": "integer",
+                            "prettyName": "Cassandra port"
+                         }
+                    }
+                }
+            }
+        }
+    },
+    "linkedSourceDefinition": {
+        "type": "object",
+        "ordering": [
+            "staging_cluster_name",
+            "staging_base_dir",
+            "no_of_nodes",
+            "port",
+            "S3bucket",
+            "full_backup_name",
+            "force_backup",
+            "use_last_full"
+        ],
+        "required": [
+            "staging_cluster_name",
+            "staging_base_dir",
+            "no_of_nodes",
+            "port",
+            "S3bucket",
+            "full_backup_name"
+        ],
+        "additionalProperties" : false,
+        "properties" : {
+            "staging_cluster_name": { 
+                "type": "string",
+                "prettyName": "Name of the staging cluster",
+                "description": "Name of the Cassandra staging cluster"
+            },
+            "staging_base_dir": { 
+                "type": "string",
+                "prettyName": "Based mount directory of the staging cluster",
+                "description": "Based directory used to mount NFS shared on the staging server"
+            },
+            "no_of_nodes": { 
+                "type": "integer",
+                "prettyName": "Number of the Cassandra cluster nodes",
+                "description": "Number of nodes to use in the virtual environments ( this can't be change on the VDB level )",
+                "default": 2
+            },
+            "port": { 
+                "type": "integer", 
+                "default": 9042,
+                "prettyName": "Cassandra port",
+                "description": "Cassandra port"
+            },
+            "S3bucket": { 
+                "type": "string",
+                "prettyName": "Name of S3 bucket with backup",
+                "description": "Name of the S3 backup with a backup location"
+            },
+            "full_backup_name": { 
+                "type": "string",
+                "prettyName": "Name of the backup inside S3 bucket",
+                "description": "Name of the backup inside S3 backup which will be used for ingestion"
+            },
+            "schema_file_name": { "type": "string", "default":"schema.cql"},
+            "force_backup": { 
+                "type": "boolean", 
+                "default": false,
+                "prettyName": "Force full backup ingestion",
+                "description": "Force full backup ingestion from a particular backup when dSource exist "
+            },
+            "use_last_full": { 
+                "type": "boolean", 
+                "default": false,
+                "prettyName": "Use last available full backup",
+                "description": "Use last available full backup (works only when dSource already exist"
+            }
+        }
+    },
+    "snapshotDefinition": {
+        "type" : "object",
+        "additionalProperties" : true,
+        "properties" : {
+            "node_list" : {
+                "type" : "array",
+                "prettyName" : "Add node names, ports",
+                "description" : "",
+                "items": {
+                   "type": "object",
+                   "properties": {
+                      "nodeName" : { "type" : "string" },
+                      "port": { "type": "integer" }
+                   }
+                }
+            },
+            "node_mapping" : {
+                "type" : "array",
+                "items": {
+                   "type": "object",
+                   "properties": {
+                      "nodemap" : { "type" : "string" }
+                   }
+                }
+            },
+            "init_tokens" : {
+                "type" : "array",
+                "items": {
+                   "type": "object",
+                   "properties": {
+                      "nodeName" : { "type" : "string" },
+                      "tokens": { "type": "string" }
+                   }
+                }
+            }  
+        }
+    }
+}

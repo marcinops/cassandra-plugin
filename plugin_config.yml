@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2020 by Delphix. All rights reserved.
+#
+
+id: 5923d6b1-c72c-4b6a-b5bb-7bff17bc2c0e
+name: cassandra
+version: 0.1.0
+language: PYTHON27
+hostTypes:
+- UNIX
+pluginType: STAGED
+entryPoint: plugin_runner:plugin
+srcDir: src
+schemaFile: schema.json
